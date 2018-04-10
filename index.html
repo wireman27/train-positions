@@ -110,7 +110,6 @@ function createTime(time_min) {
     hour = parseInt(time_min/60)
     rem = time_min % 60
     minute_str = rem.toString()
-    console.log(minute_str)
     if(hour > 24) {
         hour = hour - 24
     }
@@ -196,7 +195,6 @@ map.on('load', function() {
         filterBy(205);
         document.getElementById('slider').addEventListener('input', function(e) {
             var time = parseInt(e.target.value, 10);
-            console.log(time)
             filterBy(time);
         });
     })
