@@ -17,10 +17,9 @@
 .map-overlay {
     font: 'Garamond', Helvetica, Arial, sans-serif;
     position: absolute;
-    width:35%;
-    top: 28%;
-    left: 3%;
-    padding: 10px;
+    width:90%;
+    bottom: 5%;
+    left: 5%;
     font-size: 12px;
 }
 
@@ -55,6 +54,11 @@
     font-weight: bold;
 }
 
+#slider {
+    opacity: 1;
+    z-index: 9999;
+}
+
 .map-overlay .legend .bar {
     height: 10px;
     width: 100%;
@@ -83,9 +87,9 @@
 
 <div class='map-overlay top'>
     <div class='map-overlay-inner'>
-        <h2>WESTERN RAILWAY - UP</h2>
+        <h2>WESTERN RAILWAY - SLOW LINE TO CHURCHGATE</h2>
         <label id='time'></label>
-        <input id='slider' type='range' min='450' max='499' step='1' value='450' />
+        <input id='slider' type='range' min='205' max='1545' step='1' value='205' />
     </div>
 </div>
 
@@ -101,20 +105,6 @@ var map = new mapboxgl.Map({
     hash:true
 });
 
-var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-];
 
 function createTime(time_min) {
     hour = parseInt(time_min/60)
@@ -132,31 +122,15 @@ function createTime(time_min) {
 }
 
 function filterBy(time) {
-
-    var filters = ['==', 'time', time];
+    var filters = ["all", ['==', 'time', time],['==', 'speed', 'S']];
     map.setFilter('points', filters);
-    // map.setFilter('points-labels', filters)
-
-    // Set the label to the month
     document.getElementById('time').textContent = createTime(time);
 }
 
 map.on('load', function() {
 
     var url1 = "https://api.mapbox.com/datasets/v1/city-walkability/cjftomm5m00h82vnxhnw0h5il/features?access_token=" + public_key
-    var url2 = "https://api.mapbox.com/datasets/v1/city-walkability/cjftmrned09ey33qsf7b95okh/features?access_token=" + public_key
-    console.log(url2)
-
-    // Data courtesy of http://earthquake.usgs.gov/
-    // Query for significant earthquakes in 2015 URL request looked like this:
-    // http://earthquake.usgs.gov/fdsnws/event/1/query
-    //    ?format=geojson
-    //    &starttime=2015-01-01
-    //    &endtime=2015-12-31
-    //    &minmagnitude=6'
-    //
-    // Here we're using d3 to help us make the ajax request but you can use
-    // Any request method (library or otherwise) you wish.
+    var url2 = "https://raw.githubusercontent.com/wireman27/train-positions/master/all.geojson"
     d3.json(url1, function(err, data1) {
         if (err) throw err;
 
@@ -219,9 +193,7 @@ map.on('load', function() {
                 'text-color': 'rgba(255, 102, 0,1)'
             }
         })
-
-        filterBy(450);
-
+        filterBy(205);
         document.getElementById('slider').addEventListener('input', function(e) {
             var time = parseInt(e.target.value, 10);
             console.log(time)
