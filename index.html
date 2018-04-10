@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>mumbai_wr</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<style>
+.map-overlay {
+    font: 'Garamond', Helvetica, Arial, sans-serif;
+    position: absolute;
+    width:35%;
+    top: 28%;
+    left: 3%;
+    padding: 10px;
+    font-size: 12px;
+}
+
+.heading-overlay {
+    font: 20px/30px 'Garamond', Helvetica, Arial, sans-serif;
+    position: absolute;
+    width:35%;
+    top: 0;
+    left: 3%;
+    padding: 10px;
+    color: white;
+    letter-spacing: 3px;
+    line-height: 45px;
+    font-size: 25px;
+    opacity: 0.5;
+}
+
+.map-overlay .map-overlay-inner {
+    background-color: #fff;
+    box-shadow:0 1px 2px rgba(0, 0, 0, 0.20);
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+    opacity: 0.3;
+}
+
+.map-overlay h2 {
+    line-height: 24px;
+    display: block;
+    margin: 0 0 10px;
+    letter-spacing: 2px;
+    font-weight: bold;
+}
+
+.map-overlay .legend .bar {
+    height: 10px;
+    width: 100%;
+    background: linear-gradient(to right, #FCA107, #7F3121);
+}
+
+.map-overlay input {
+    background-color: transparent;
+    display: inline-block;
+    width: 100%;
+    position: relative;
+    margin: 0;
+    cursor: ew-resize;
+}
+
+#time {
+    font-size: 2em;
+}
+</style>
+
+<div id='map'></div>
+
+<div class='heading-overlay'>
+    <h2>MUMBAI TRAIN POSITIONS</h2>
+</div>
+
+<div class='map-overlay top'>
+    <div class='map-overlay-inner'>
+        <h2>WESTERN RAILWAY - UP</h2>
+        <label id='time'></label>
+        <input id='slider' type='range' min='450' max='499' step='1' value='450' />
+    </div>
+</div>
+
+<script src='https://d3js.org/d3.v3.min.js' charset='utf-8'></script>
+<script>
+public_key = 'pk.eyJ1IjoiY2l0eS13YWxrYWJpbGl0eSIsImEiOiJjamFncnNkODUycHRnMzNuaW14eHE5d24yIn0.0ty0jyl5uuIF4fulta_vjg'
+mapboxgl.accessToken = public_key
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/dark-v9',
+    center: [72.8405, 19.01914], 
+    zoom: 12.98,
+    hash:true
+});
+
+var months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+];
+
+function createTime(time_min) {
+    hour = parseInt(time_min/60)
+    rem = time_min % 60
+    minute_str = rem.toString()
+    console.log(minute_str)
+    if(hour > 24) {
+        hour = hour - 24
+    }
+    if(rem < 10) {
+        minute_str = '0' + rem.toString()
+    }
+    time = hour.toString() + ':' + minute_str
+    return(time)
+}
+
+function filterBy(time) {
+
+    var filters = ['==', 'time', time];
+    map.setFilter('points', filters);
+    // map.setFilter('points-labels', filters)
+
+    // Set the label to the month
+    document.getElementById('time').textContent = createTime(time);
+}
+
+map.on('load', function() {
+
+    var url1 = "https://api.mapbox.com/datasets/v1/city-walkability/cjftomm5m00h82vnxhnw0h5il/features?access_token=" + public_key
+    var url2 = "https://api.mapbox.com/datasets/v1/city-walkability/cjftmrned09ey33qsf7b95okh/features?access_token=" + public_key
+    console.log(url2)
+
+    // Data courtesy of http://earthquake.usgs.gov/
+    // Query for significant earthquakes in 2015 URL request looked like this:
+    // http://earthquake.usgs.gov/fdsnws/event/1/query
+    //    ?format=geojson
+    //    &starttime=2015-01-01
+    //    &endtime=2015-12-31
+    //    &minmagnitude=6'
+    //
+    // Here we're using d3 to help us make the ajax request but you can use
+    // Any request method (library or otherwise) you wish.
+    d3.json(url1, function(err, data1) {
+        if (err) throw err;
+
+        map.addSource('route', {
+            'type': 'geojson',
+            'data': data1
+        });
+
+        map.addLayer({
+            'id': 'route',
+            'type': 'line',
+            'source': 'route',
+            "paint": {
+                "line-width": 2,
+                "line-color": "#007cbf"
+            }
+        });
+
+        map.addLayer({
+            'id': 'stations',
+            'type': 'symbol',
+            'source': 'route',
+            "layout": {
+                "icon-image": "rail-15",
+                "text-field": "{station}",
+                "text-offset": [0.6, 0],
+                "text-anchor": "left",
+                "icon-allow-overlap": true,
+                "text-allow-overlap": true,
+                "text-size":12
+            },
+            'paint': {
+                'text-color': 'rgba(102, 102, 255,1)'
+            }
+        });
+    });
+
+    d3.json(url2, function(err, data2) {
+        if (err) throw err;
+
+        map.addSource('points', {
+            'type': 'geojson',
+            'data': data2
+        });
+
+        map.addLayer({
+            'id': 'points',
+            'type': 'symbol',
+            'source': 'points',
+            "layout": {
+                "icon-image": "bus-11",
+                "text-field": "{service}",
+                "text-offset": [-0.6, 0],
+                "text-anchor": "right",
+                "icon-allow-overlap": true,
+                "text-allow-overlap": true,
+                "text-size":12
+            },
+            'paint': {
+                'text-color': 'rgba(255, 102, 0,1)'
+            }
+        })
+
+        filterBy(450);
+
+        document.getElementById('slider').addEventListener('input', function(e) {
+            var time = parseInt(e.target.value, 10);
+            console.log(time)
+            filterBy(time);
+        });
+    })
+});
+</script>
+
+</body>
+</html>
