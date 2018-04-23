@@ -1,8 +1,9 @@
 # train-positions
 
-![](https://user-images.githubusercontent.com/126868/39108890-ef27209c-46e7-11e8-8747-30d9eff98785.gif)
+![](https://user-images.githubusercontent.com/126868/39108890-ef27209c-46e7-11e8-8747-30d9eff98785.gif)<br>
+_**[View demo](https://wireman27.github.io/train-positions/)**_
 
-Simple visualisation of where Mumbai's trains are at any given minute.
+Simple visualisation of where Mumbai's trains are at any given minute. 
 
 **Lines**
 - Virar->Churchgate (Slow)
