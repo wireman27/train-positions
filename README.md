@@ -1,8 +1,6 @@
 # train-positions
 
-A simple theoretical visualisation of where Mumbai's trains are at any given minute. <br>
-Current version is Western line, slow, non-Sunday trains going towards Churchgate. <br>
-Drag the slider to select time.<br>
+A simple theoretical visualisation of where Mumbai's trains are at any given minute. Current version is Western line, slow, non-Sunday trains going towards Churchgate. Drag the slider to select time.<br>
 
 **Sources** <br>
 
