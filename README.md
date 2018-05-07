@@ -3,7 +3,7 @@
 ![](https://user-images.githubusercontent.com/126868/39108890-ef27209c-46e7-11e8-8747-30d9eff98785.gif)<br>
 _**[View demo](https://wireman27.github.io/train-positions/)**_
 
-Simple visualisation of where Mumbai's trains are at any given minute. 
+Simple visualisation of where Mumbai's trains are at any given minute. Current version is Western line, slow, non-Sunday trains going towards Churchgate. Drag the slider to select time.
 
 **Lines**
 - Virar->Churchgate (Slow)
@@ -16,3 +16,4 @@ Simple visualisation of where Mumbai's trains are at any given minute.
 - wr_timetable.pdf - Raw pdf from the Western Railway website <br>
 - gen_db_all - Use Tabula-converted CSV files from wr_timetable.pdf to create a major chunk of all.geojson <br>
 - geojson.py - Use station coordinates to ultimately create all.geojson
+
